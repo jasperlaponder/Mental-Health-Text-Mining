@@ -1,7 +1,7 @@
 from import_data import load_data, split_data
+from emotion_detection import detect_all_emotions
 
-if __name__ == "__main__":
-    data = load_data(True)
-    pre_covid, post_covid = split_data(data)
-    print(pre_covid)
-    print(post_covid)
+data = load_data(True)
+pre_covid, post_covid = split_data(data)
+print(detect_all_emotions(pre_covid))
+print(detect_all_emotions(post_covid))
