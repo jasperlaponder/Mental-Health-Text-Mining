@@ -1,16 +1,20 @@
 from transformers import pipeline
+import torch
 
-def detect_emotion(text):
-    """
-    Detect the emotion of the given text.
-    """
-    classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
-    return classifier(text)
-
-def detect_all_emotions(data):
+def detect_all_emotions(data, save=False, filename="data_with_emotions.pkl"):
     """
     Extend dataframe with detected emotion for all the tweets in the given dataframe.
     """
-    data['detected_emotion'] = data['text'].apply(lambda x: detect_emotion(x)[0]['label'])
-    return data
+    print("CUDA available: " + str(torch.cuda.is_available()))
+    data = data.copy()
+    classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
 
+    texts = data['text'].tolist()
+    results = classifier(texts, truncation=True, batch_size=16) 
+    data['detected_emotion'] = [result['label'] for result in results]
+
+    # Optionally save results
+    if save:
+        data.to_pickle(filename)
+
+    return data
