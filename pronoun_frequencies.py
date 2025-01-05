@@ -6,7 +6,7 @@ def pronoun_frequency(text, pronouns):
         return 0
     count = 0
     for pronoun in pronouns:
-        count += text.count(pronoun)
+        count += text.lower().count(pronoun.lower())
     return count / len(text)
 
 def pronoun_frequency_dataframe(data, pronouns, save=False, filename="data_with_pronouns.pkl"):

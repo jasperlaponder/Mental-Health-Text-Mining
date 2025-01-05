@@ -1,4 +1,4 @@
-from import_data import load_data, split_data
+from import_data import load_data, split_data, preprocess_conditions, combine_pickle_chunks
 from emotion_detection import detect_all_emotions
 from pronoun_frequencies import pronoun_frequency_dataframe
 import pandas as pd
@@ -13,12 +13,14 @@ ALL_PRONOUNS = ["I", "me", "my", "mine", "myself", "we", "us", "our", "ours", "o
 #Conditions to load
 ALL_CONDITIONS = ["adhd", "anxiety", "bipolar", "depression", "mdd", "neg", "ocd", "ppd", "ptsd"]
 
-def process_conditions(conditions):
+def process_conditions(conditions, data=None):
     """
     Process the specified conditions
     """
     print("Loading data...")
-    data = load_data(False, conditions)
+    if data is None:
+        data = load_data(True, conditions)
+    print("Splitting data...")
     pre_covid, post_covid = split_data(data)
 
     print("Detecting emotions pre covid...")
@@ -41,5 +43,8 @@ def process_conditions(conditions):
     print(pre_covid_final)
     print(post_covid_final)
 
+# Run analysis
+# preprocess_conditions(ALL_CONDITIONS)
 for condition in ALL_CONDITIONS:
-    process_conditions([condition])
+    data = combine_pickle_chunks(condition, output_file=f'condition_data_{condition}.pkl')
+    process_conditions([condition], data)
