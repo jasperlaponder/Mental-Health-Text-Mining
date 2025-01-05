@@ -10,7 +10,7 @@ def detect_all_emotions(data, save=False, filename="data_with_emotions.pkl"):
     classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
 
     texts = data['text'].tolist()
-    results = classifier(texts, truncation=True, batch_size=16) 
+    results = classifier(texts, truncation=True, batch_size=4) 
     data['detected_emotion'] = [result['label'] for result in results]
 
     # Optionally save results

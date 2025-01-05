@@ -2,12 +2,11 @@ import os
 import json
 import pandas as pd
 
-def load_data(sample):
+def load_data(sample, conditions):
     """
     Load the data from the folders specified in conditions, and return a dataframe sorted by date.
     If sample is true, load the sample data.
     """
-    conditions = ["adhd", "anxiety", "bipolar", "depression", "mdd", "neg", "ocd", "ppd", "ptsd"]
     all_tweets = []
 
     base_path = "data_sample" if sample else ""
