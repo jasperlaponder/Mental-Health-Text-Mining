@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+from concurrent.futures import ProcessPoolExecutor
 
 def load_data(sample, conditions):
     """
@@ -109,25 +110,27 @@ def preprocess_conditions(conditions):
 
         print(f"Finished processing condition: {condition}")
 
+def load_pickle(file_path):
+    """Helper function to load a single Pickle file."""
+    print(f"Loading {file_path}...")
+    return pd.read_pickle(file_path)
+
 def combine_pickle_chunks(condition, directory="intermediate_data", output_file=None):
     """
-    Combine all Pickle chunks for a condition incrementally.
+    Combine Pickle chunks for a condition using parallel processing.
     """
-    combined_df = None
     chunk_files = [
         os.path.join(directory, file)
         for file in os.listdir(directory)
         if file.startswith(f"{condition}_chunk_") and file.endswith(".pkl")
     ]
 
-    for file_path in sorted(chunk_files):
-        print(f"Loading {file_path}...")
-        chunk = pd.read_pickle(file_path)
+    with ProcessPoolExecutor() as executor:
+        print("Loading chunks in parallel...")
+        chunks = list(executor.map(load_pickle, chunk_files))
 
-        if combined_df is None:
-            combined_df = chunk
-        else:
-            combined_df = pd.concat([combined_df, chunk])
+    print("Concatenating all chunks...")
+    combined_df = pd.concat(chunks, ignore_index=True)
 
     if output_file:
         print(f"Saving combined DataFrame to {output_file}...")
