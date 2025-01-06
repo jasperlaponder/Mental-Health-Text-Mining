@@ -24,6 +24,9 @@ def pronoun_frequency_dataframe(data, pronouns, save=False, filename="data_with_
     return data
 
 def visualize_pronoun_frequency(pre_covid, post_covid, conditions):
+    """
+    Function for visualization of the pronoun frequencies.
+    """
     pre_covid_averages = pre_covid.groupby('condition')['pronoun_frequency'].mean().values
     post_covid_averages = post_covid.groupby('condition')['pronoun_frequency'].mean().values
     
